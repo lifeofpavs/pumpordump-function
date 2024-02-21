@@ -113,7 +113,7 @@ post '/all_seen' do
     }
   )
   content_type :json
-  halt 201, {message: 'Success'}
+  halt 201, { message: 'Success' }.to_json
 rescue StandardError => e
   puts e
   content_type :json
@@ -131,7 +131,7 @@ post '/all_unseen' do
 
   db.collection('users').where('uid', '==', payload['user_id']).get.first.reference.update({ allPairsSeen: false })
   content_type :json
-  halt 201, {message: 'Success'}
+  halt 201, { message: 'Success' }.to_json
 rescue StandardError
   content_type :json
   halt 500,
