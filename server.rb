@@ -70,10 +70,10 @@ post '/compare_symbols' do
     is_pump = CompareSymbols.compare_24hr_change(symbol[:coingecko_id])
 
     db.collection('symbol_comparisons').add({
-                                            pump: is_pump,
-                                            symbol: symbol[:symbol],
-                                            date: Time.now
-                                          })
+                                              pump: is_pump,
+                                              symbol: symbol[:symbol],
+                                              date: Time.now
+                                            })
   end
 end
 
@@ -91,7 +91,7 @@ post '/vote' do
                                       user_uid: payload['user_id']
                                     })
   content_type :json
-  halt 201
+  halt 201, { message: 'success' }.to_json
 rescue StandardError
   content_type :json
   halt 500,
@@ -113,7 +113,7 @@ post '/all_seen' do
     }
   )
   content_type :json
-  halt 201
+  halt 201, {message: 'Success'}
 rescue StandardError => e
   puts e
   content_type :json
@@ -131,7 +131,7 @@ post '/all_unseen' do
 
   db.collection('users').where('uid', '==', payload['user_id']).get.first.reference.update({ allPairsSeen: false })
   content_type :json
-  halt 201
+  halt 201, {message: 'Success'}
 rescue StandardError
   content_type :json
   halt 500,
