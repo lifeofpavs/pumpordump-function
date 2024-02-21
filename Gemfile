@@ -13,3 +13,5 @@ gem 'watir'
 gem 'cloudinary'
 gem 'sinatra'
 gem 'watir-webdriver'
+
+gem "rackup", "~> 2.1"
