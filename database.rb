@@ -16,6 +16,6 @@ class Database
   end
 
   def self.setup_db
-    ::Google::Cloud::Firestore.new(project_id: ENV['FIREBASE_PROJECT_ID'], credentials: 'credentials.json')
+    ::Google::Cloud::Firestore.new(project_id: ENV['FIREBASE_PROJECT_ID'], credentials: JSON.parse(ENV['FIREBASE_CREDENTIALS']))
   end
 end
