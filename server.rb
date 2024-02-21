@@ -4,21 +4,14 @@ require 'pry'
 
 require_relative 'database'
 require_relative 'firebase_verifier'
+require_relative 'compare_symbols'
 
 before '/*' do
   content_type :json
 end
 
 get '/' do
-  db = Database.client
-  collection = db.collection('users')
-  # Get the  data from the document
-  document_data = collection.get.map do |data|
-    { email: data[:email], name: data[:name] }
-  end
-
-  # Display the data
-  "Document Data: #{document_data}"
+  'Awake'
 end
 
 post '/sign_or_create_user' do
@@ -70,6 +63,20 @@ get '/symbols' do
   db.collection('symbols').get.map(&:data).to_json
 end
 
+post '/compare_symbols' do
+  db = Database.client
+
+  db.collection('symbols').get.map(&:data).each do |symbol|
+    is_pump = CompareSymbols.compare_24hr_change(symbol[:coingecko_id])
+
+    db.collection('symbol_comparisons').add({
+                                            pump: is_pump,
+                                            symbol: symbol[:symbol],
+                                            date: Time.now
+                                          })
+  end
+end
+
 post '/vote' do
   db = Database.client
   params = JSON.parse(request.body.read)
@@ -99,7 +106,12 @@ post '/all_seen' do
 
   payload = FirebaseVerifier.verify_firebase_token(params['did_token'])
 
-  db.collection('users').where('uid', '==', payload['user_id']).get.first.reference.update({ allPairsSeen: true })
+  db.collection('users').where('uid', '==', payload['user_id']).get.first.reference.update(
+    {
+      allPairsSeen: true,
+      allPairsSeenAt: Time.now
+    }
+  )
   content_type :json
   halt 201
 rescue StandardError => e
