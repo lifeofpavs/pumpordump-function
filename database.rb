@@ -2,6 +2,7 @@
 require 'dotenv/load'
 require 'google/cloud/firestore'
 
+# Database - Class for interacting with Fireabase Firestore database
 class Database
   @instance = nil
 
@@ -16,6 +17,9 @@ class Database
   end
 
   def self.setup_db
-    ::Google::Cloud::Firestore.new(project_id: ENV['FIREBASE_PROJECT_ID'], credentials: JSON.parse(ENV['FIREBASE_CREDENTIALS']))
+    ::Google::Cloud::Firestore.new(
+      project_id: ENV['FIREBASE_PROJECT_ID'],
+      credentials: JSON.parse(ENV['FIREBASE_CREDENTIALS'])
+    )
   end
 end
